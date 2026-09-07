@@ -101,4 +101,7 @@ target_link_libraries(
     PRIVATE
     "${RUST_LIB_PATH}"
     log
+    GLESv3
+    EGL
+    android
 )

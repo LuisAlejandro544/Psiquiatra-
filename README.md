@@ -8,36 +8,39 @@ El jugador asume el papel de un detective privado que se adentra en el abandonad
 
 ## 🏛️ Arquitectura Políglota del Motor
 
-La aplicación combina Kotlin + Jetpack Compose con un subsistema nativo de alto rendimiento:
+La aplicación combina Kotlin + Jetpack Compose con un subsistema nativo de alto rendimiento acelerado por GPU:
 
-1. **Kotlin & Jetpack Compose**: Interfaz táctil de baja latencia, HUD cinematográfico, sombreado de viñeta radial y cuaderno interactivo del caso.
-2. **C++ (NDK 28 / Clang 17)**: Conexión JNI (`NativeEngineBridge`), control manual de memoria sin pausas de Garbage Collector e integración del runtime.
-3. **Lua 5.4.7 (C Puro oficial)**: El motor de scripting original en C de la PUC-Rio, sin envoltorios de terceros. Permite orquestar eventos narrativos, evaluación de cordura ante pacientes y respuestas dinámicas del sanatorio.
-4. **Rust 1.98 (`asylum_core_rust`)**: Núcleo estático libre de dependencias pesadas (`#[no_std]`), responsable del cálculo preciso del decaimiento de cordura y del cálculo de distancias para detección de tensión y sustos.
+1. **OpenGL ES 3.2 (Pipeline de GPU en GLThread)**: Renderizado tridimensional a 60 FPS estables ejecutado en un hilo de GPU independiente (`SanatorioGLSurfaceView` + `SanatorioGLRenderer`). Elimina por completo el lag y las pausas de recolección de basura ocasionadas por recomposiciones continuas en Compose. Incorpora shaders GLSL 3.0/3.2 con distorsión por baja cordura, atenuación física de luz y viñeteado claustrofóbico.
+2. **Kotlin & Jetpack Compose**: Interfaz táctil de latencia mínima, controles táctiles analógicos, HUD cinematográfico, sombreado de atmósfera y cuaderno interactivo del caso con notas forenses.
+3. **C++ (NDK 28 / Clang 17)**: Conexión JNI (`NativeEngineBridge`), enlace nativo de `GLESv3` y `EGL`, control manual de memoria y telemetría de rendimiento del hardware.
+4. **Lua 5.4.7 (C Puro oficial)**: El motor de scripting original en C de la PUC-Rio, sin envoltorios de terceros. Permite orquestar eventos narrativos, evaluación de cordura ante pacientes y respuestas dinámicas del sanatorio.
+5. **Rust 1.98 (`asylum_core_rust`)**: Núcleo estático libre de dependencias pesadas (`#[no_std]`), responsable del cálculo preciso del decaimiento de cordura y del cálculo de distancias euclidianas para detección de tensión y sustos.
 
 ---
 
 ## 🎮 Mecánicas de Juego
 
-- **Vista en Primera Persona (Horizontal)**: Entorno 3D con textura de azulejos agrietados, celdas de aislamiento con acolchado de cuero, rejas carcelarias oxidadas y puertas de alta seguridad con mirilla.
-- **Linterna con Haz Dinámico**: Atenuación de luz, interruptor sonoro táctil y cálculo del impacto en la estabilidad psicológica del protagonista.
-- **Luces Fluorescentes Inestables**: Parpadeos procedurales a 60/120 Hz, caídas de tensión y apagones totales inesperados.
-- **Audio Procedural de Tensión**: Zumbido eléctrico, pisadas sobre baldosas mojadas, chasquido de interruptores y frecuencias graves continuas generadas sintéticamente.
-- **Cuaderno del Investigador**: Consulta de expedientes clínicos archivados, plano esquemático del sanatorio en tiempo real y panel de diagnóstico del subsistema nativo.
-- **Modelos 3D Integrados (.gltf / .obj / .mtl / CC0)**:
-  - **Manos Articuladas del Investigador (`investigator_hands`)**: Malla 3D completa (3,975 vértices) con guantes de cuero de investigación forense, armadura esquelética modular de 8 articulaciones (muñeca, palma y 6 falanges para pulgar, índice, medio y grupo meñique), animaciones de agarre, temblor y extensión (`Anim_Flashlight_Grip`, `Anim_Tremble_Insanity`), renderizado dinámico en primera persona y panel de control de rotaciones en el Cuaderno.
-  - **Linterna Industrial de Investigador**: Modelos 3D completos con tubos cilíndricos, anillos de agarre de goma antideslizante, reflector parabólico cromado, interruptor deslizante mecánico y bombilla incandescente.
-  - **Silla de Ruedas del Sanatorio (`wheelchair_01`)**: Modelo 3D de hospital psiquiátrico con 7 huesos articulados (chasis, respaldo inclinable, ruedas giratorias y correas de sujeción) con animaciones de crujido y rodado.
-  - **Estados de Iluminación Reales**:
-    - **Con Luces (Encendida)**: `flashlight_lights_on.obj` / `flashlight_lights_on.mtl` con material emisivo cálido (`Ke 1.0 0.88 0.45`), lente de cristal templado traslúcido y cono volumétrico de proyección.
-    - **Sin Luces (Apagada)**: `flashlight_lights_off.obj` / `flashlight_lights_off.mtl` con filamento apagado (`Ke 0.0`), interruptor retraído y ausencia de haz de luz.
-    - **glTF 2.0 Animado**: `flashlight.gltf` autocontenido con materiales PBR metálico-rugosidad, jerarquía de nodos articulados y animación de deslizamiento del interruptor.
+- **Vista en Primera Persona Hardware-Accelerated (OpenGL ES 3.2)**: Entorno tridimensional renderizado por GPU con textura real de baldosas desgastadas del sanatorio (`dirty_tiles` / `interior_tiles`), celdas de aislamiento con acolchado de cuero, rejas carcelarias oxidadas y puertas de alta seguridad con mirilla.
+- **Nueva Linterna Vintage (`vintage_flashlight`)**:
+  - Modelo industrial de 1984 con caja de batería roja desgastada, remaches de latón y asa de baquelita negra.
+  - Cono reflector pulido de aluminio y lente estriada con bulbo de tungsteno visible.
+  - Empuñadura ergonómica sostenida firmemente por el guante de investigación forense (`investigator_hands`).
+  - **Efecto de Encendido Realista**: Animación de incandescencia gradual del filamento (`filamentWarmup`), interruptor deslizante superior accionado físicamente por el pulgar, y haz de luz cónico volumétrico con partículas de polvo en suspensión.
+  - **Iluminación Lógica**: Atenuación cuadrática física, haz central enfocado (*spotlight* a 3200K de luz cálida) y caída angular suave hacia la penumbra.
+- **Luces Fluorescentes Inestables**: Parpadeos procedurales a 60/120 Hz, caídas de tensión y apagones totales inesperados sincronizados con zumbido eléctrico en audio sintético.
+- **Audio Procedural de Tensión**: Zumbido a 60 Hz con armónicos, pisadas sobre azulejos mojados, chasquido mecánico de interruptor y frecuencias graves continuas generadas sintéticamente mediante `AudioTrack`.
+- **Cuaderno del Investigador**: Consulta de expedientes clínicos archivados, plano esquemático del sanatorio en tiempo real y panel de diagnóstico del subsistema nativo (C++, Rust, Lua, OpenGL ES 3.2).
+- **Modelos y Texturas PBR Integradas (CC0)**:
+  - **Texturas del Suelo (`dirty_tiles` / `interior_tiles`)**: Mapas PBR (difuso, normales, rugosidad, ARM y oclusión) extraídos directamente de Poly Haven con licencia de Dominio Público.
+  - **Manos Articuladas del Investigador (`investigator_hands`)**: Malla 3D completa (3,975 vértices) con guantes de cuero de investigación forense, armadura esquelética modular de 8 articulaciones, animaciones de agarre, temblor y extensión.
+  - **Silla de Ruedas del Sanatorio (`wheelchair_01`)**: Modelo 3D de hospital psiquiátrico con 7 huesos articulados con animaciones de crujido y rodado.
 
 ---
 
 ## 🛠️ Requisitos y Compilación
 
 - **Android SDK**: `minSdk 24`, `targetSdk 36`, `compileSdk 36`
+- **GPU Feature**: OpenGL ES 3.2 requerida (`android.hardware.opengles.version 0x00030002`)
 - **NDK**: Versión 26+ / 28+ con soporte para `arm64-v8a`, `armeabi-v7a` y `x86_64`
 - **CMake**: Versión 3.22.1 o superior
 - **Rust Toolchain**: `rustc 1.98+` con targets `aarch64-linux-android`, `armv7-linux-androideabi` y `x86_64-linux-android`
@@ -54,17 +57,16 @@ La aplicación combina Kotlin + Jetpack Compose con un subsistema nativo de alto
 
 El repositorio incluye flujos de trabajo automatizados en `.github/workflows/`:
 1. **`build-debug-apk.yml`**:
-   - Descarga el código fuente y prepara dependencias C++, Rust (con sus 3 targets Android) y Lua.
-   - Ejecuta `./ensure_keystore.sh` para garantizar la firma `debug.keystore` de forma desatendida.
-   - Compila el APK Debug (`gradle assembleDebug --no-build-cache --no-daemon`) y publica el artefacto descargable.
+   - Prepara dependencias C++, Rust (con sus 3 targets Android), Lua y OpenGL ES.
+   - Ejecuta `./ensure_keystore.sh` para garantizar la firma `debug.keystore`.
+   - Compila el APK Debug (`gradle assembleDebug --no-build-cache --no-daemon`) y publica el artefacto.
 2. **`override_commit_message.yml`**:
-   - Inspecciona `commit_message.txt` tras cada push a ramas principales (`main`/`master`).
-   - Si el último mensaje del commit difiere del contenido de `commit_message.txt`, reescribe el commit automáticamente preservando la autoría y sincronizando el historial.
+   - Inspecciona `commit_message.txt` tras cada push y sincroniza el historial git automáticamente.
 
 ---
 
 ## ⚙️ Scripts de Automatización
 
-- **`./ensure_keystore.sh`**: Verifica la existencia de `debug.keystore`. Si no existe, la crea al instante mediante `keytool` para garantizar que la compilación Debug esté siempre firmada y lista.
-- **`./organize_md_to_root.sh`**: Centraliza todos los archivos de documentación Markdown (`.md`) exclusivamente en la raíz del repositorio, evitando duplicados en carpetas de módulos.
-- **`./fetch_assets.sh`**: Busca, descarga y desempaqueta modelos 3D y texturas con licencia CC0 (Dominio Público). Extrae archivos sueltos (glTF, OBJ, MTL y texturas) e inyecta armaduras de huesos (rigging) y animaciones editables.
+- **`./ensure_keystore.sh`**: Verifica la existencia de `debug.keystore` o la crea automáticamente con `keytool`.
+- **`./organize_md_to_root.sh`**: Centraliza todos los archivos de documentación Markdown (`.md`) exclusivamente en la raíz del repositorio.
+- **`./fetch_assets.sh`**: Busca, descarga y desempaqueta modelos 3D y texturas con licencia libre CC0 (Dominio Público) e inyecta armaduras de huesos (rigging) y animaciones editables.

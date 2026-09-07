@@ -1,6 +1,5 @@
 package com.example.sanatorio.ui
 
-import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -52,15 +51,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import com.example.sanatorio.engine.gl.SanatorioGLSurfaceView
 import com.example.sanatorio.engine.HorrorAudioSynthesizer
-import com.example.sanatorio.engine.RaycastRenderer
 import com.example.sanatorio.model.AsylumMap
 import com.example.sanatorio.model.Decoration
 import com.example.sanatorio.model.GameState
@@ -83,12 +82,8 @@ import kotlin.math.sqrt
 fun SanatorioGameScreen() {
     val map = remember { AsylumMap() }
     val gameState = remember { GameState() }
-    val renderer = remember { RaycastRenderer(360, 200) }
     val audioSynth = remember { HorrorAudioSynthesizer() }
     val random = remember { Random() }
-
-    var currentBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var frameTrigger by remember { mutableStateOf(0L) }
 
     // Joystick & Touch controls state
     var joystickDeltaX by remember { mutableFloatStateOf(0f) }
@@ -202,11 +197,7 @@ fun SanatorioGameScreen() {
             // Update current room name
             gameState.currentRoom = map.getRoomName(gameState.playerX, gameState.playerY)
 
-            // Render 3D frame
-            currentBitmap = renderer.render(gameState, map)
-            frameTrigger++
-
-            delay(28) // ~35 FPS for smooth battery-friendly 3D horror rendering
+            delay(16) // 60 FPS ultra fluido para física y controles táctiles
         }
     }
 
@@ -218,19 +209,15 @@ fun SanatorioGameScreen() {
         val screenWidth = maxWidth
         val screenHeight = maxHeight
 
-        // 1. 3D VIEWPORT CANVAS
-        currentBitmap?.let { bmp ->
-            Canvas(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("game_3d_viewport")
-            ) {
-                drawImage(
-                    image = bmp.asImageBitmap(),
-                    dstSize = androidx.compose.ui.unit.IntSize(size.width.toInt(), size.height.toInt())
-                )
-            }
-        }
+        // 1. 3D VIEWPORT HARDWARE ACCELERATED (OpenGL ES 3.2 - GLThread 60 FPS)
+        AndroidView(
+            factory = { context ->
+                SanatorioGLSurfaceView(context, gameState, map)
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("game_3d_viewport")
+        )
 
         // 2. HORROR ATMOSPHERIC OVERLAYS (Vignette & Dirt)
         Box(

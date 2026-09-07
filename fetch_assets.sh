@@ -50,8 +50,8 @@ SEMANTIC_MAPPINGS = {
     "azulejo": ["tiles", "tile", "floor", "ceramic"],
     "azulejos": ["tiles", "tile", "floor", "ceramic"],
     "pared": ["wall", "plaster", "concrete", "grunge"],
-    "piso": ["floor", "tiles", "concrete"],
-    "suelo": ["floor", "tiles", "concrete"],
+    "piso": ["dirty_tiles", "interior_tiles", "floor_tiles_06", "floor", "tiles", "concrete"],
+    "suelo": ["dirty_tiles", "interior_tiles", "floor", "tiles", "concrete"],
     "concreto": ["concrete", "cement"],
     "cemento": ["concrete", "cement"],
     "oxido": ["rust", "rusty", "metal", "worn"],
@@ -62,7 +62,7 @@ SEMANTIC_MAPPINGS = {
     "puerta": ["door", "gate"],
     "reja": ["gate", "bars", "prison", "grille"],
     "ventana": ["window", "glass"],
-    "linterna": ["flashlight", "lamp", "lantern"],
+    "linterna": ["vintage_flashlight", "signal_flashlight", "small_plastic_torch", "flashlight", "lamp", "lantern"],
     "botiquin": ["medical_box", "first_aid", "medical"],
     "vendaje": ["medical_tape", "bandage", "hospital"],
     "muleta": ["vintage_crutches_01", "crutches", "medical"],
@@ -621,16 +621,29 @@ def main():
             print(f"    [✓] Animaciones inyectadas: {anim_names}.")
 
     else:
-        # Descarga de texturas PBR sueltas
-        for map_type in ["Diffuse", "Normal", "Roughness", "ARM", "Displacement"]:
-            if map_type in files_catalog:
-                map_res = files_catalog[map_type].get(res, {})
+        # Descarga de texturas PBR sueltas (mapeando nombres de la API de Poly Haven)
+        pbr_map_specs = [
+            ("diffuse", ["Diffuse", "diff", "col"]),
+            ("normal", ["nor_gl", "Normal", "nor_dx"]),
+            ("roughness", ["Rough", "Roughness", "rough"]),
+            ("arm", ["arm", "ARM"]),
+            ("ao", ["AO", "ao"]),
+            ("displacement", ["Displacement", "disp"])
+        ]
+        for label, candidate_keys in pbr_map_specs:
+            found_key = None
+            for k in candidate_keys:
+                if k in files_catalog:
+                    found_key = k
+                    break
+            if found_key:
+                map_res = files_catalog[found_key].get(res, {})
                 format_choice = "jpg" if "jpg" in map_res else ("png" if "png" in map_res else None)
                 if format_choice:
                     file_info = map_res[format_choice]
-                    filename = f"{best_id.lower()}_{map_type.lower()}.{format_choice}"
+                    filename = f"{best_id.lower()}_{label}.{format_choice}"
                     target_file = os.path.join(dest_dir, filename)
-                    print(f"    -> Descargando mapa {map_type} ({filename})...")
+                    print(f"    -> Descargando mapa {label} ({filename})...")
                     download_file(file_info["url"], target_file)
                     downloaded_files.append(filename)
 

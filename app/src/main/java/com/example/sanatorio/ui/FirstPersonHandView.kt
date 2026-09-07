@@ -3,20 +3,17 @@ package com.example.sanatorio.ui
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Highlight
 import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,8 +29,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -44,15 +41,14 @@ import com.example.ui.theme.HorrorBloodRed
 import com.example.ui.theme.HorrorColdTeal
 import com.example.ui.theme.HorrorColdWhite
 import com.example.ui.theme.HorrorDarkSurface
-import com.example.ui.theme.HorrorSurfaceVariant
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Renderizador en primera persona del asset 3D 'investigator_hands' (Manos y Linterna).
- * Muestra el brazo, muñeca, palma y dedos articulados sujetando la linterna pesada de aluminio.
- * Reacciona dinámicamente al paso del jugador (sway), estado de la linterna y temblores de cordura.
+ * Renderizador en primera persona del asset 3D 'investigator_hands' sosteniendo
+ * el nuevo modelo 'vintage_flashlight' (Linterna de época con caja de batería roja,
+ * reflector pulido y haz cónico de luz incandescente con efecto de encendido).
  */
 @Composable
 fun FirstPersonHandView(
@@ -74,11 +70,18 @@ fun FirstPersonHandView(
     val trembleX = if (isLowSanity) (sin(timeMillis * 0.04) * 6f).toFloat() else 0f
     val trembleY = if (isLowSanity) (cos(timeMillis * 0.035) * 5f).toFloat() else 0f
 
-    // Animación suave de pulsación del pulgar en el interruptor mecánico
+    // Animación suave de pulsación del pulgar en el interruptor mecánico de la linterna vintage
     val thumbPressY by animateFloatAsState(
-        targetValue = if (isLightOn) 4f else 0f,
-        animationSpec = tween(durationMillis = 150),
+        targetValue = if (isLightOn) 6f else 0f,
+        animationSpec = tween(durationMillis = 130),
         label = "thumb_switch_press"
+    )
+
+    // Efecto de encendido: calentamiento del filamento incandescente de 1984
+    val filamentWarmup by animateFloatAsState(
+        targetValue = if (isLightOn) 1.0f else 0.0f,
+        animationSpec = tween(durationMillis = 240),
+        label = "filament_warmup"
     )
 
     Box(
@@ -86,7 +89,7 @@ fun FirstPersonHandView(
             .fillMaxSize()
             .testTag("first_person_hand_container")
     ) {
-        // Lienzo de dibujo de la mano y linterna en perspectiva primera persona (esquina inferior derecha)
+        // Lienzo de dibujo de la mano y la linterna vintage
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
@@ -96,45 +99,50 @@ fun FirstPersonHandView(
             val canvasW = size.width
             val canvasH = size.height
 
-            // Ancla de la mano del investigador (esquina inferior derecha)
-            val baseX = canvasW * 0.72f + swayX + trembleX
-            val baseY = canvasH * 0.76f + swayY + trembleY
+            // Anclaje de la mano y linterna en el cuadrante inferior derecho
+            val baseX = canvasW * 0.73f + swayX + trembleX
+            val baseY = canvasH * 0.77f + swayY + trembleY
 
-            drawInvestigatorHandAndFlashlight(
+            drawVintageFlashlightAndHand(
                 baseX = baseX,
                 baseY = baseY,
                 isLightOn = isLightOn,
+                filamentWarmup = filamentWarmup,
                 isLowSanity = isLowSanity,
                 thumbPressY = thumbPressY
             )
         }
 
-        // Badge indicador sutil del estado del modelo de manos en tiempo real
+        // Badge indicador del estado del rig y linterna vintage
         Surface(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 96.dp)
                 .testTag("hand_rig_status_badge"),
             shape = RoundedCornerShape(8.dp),
-            color = HorrorDarkSurface.copy(alpha = 0.85f),
-            border = androidx.compose.foundation.BorderStroke(1.dp, if (isLowSanity) HorrorBloodRed.copy(alpha = 0.6f) else HorrorColdTeal.copy(alpha = 0.35f))
+            color = HorrorDarkSurface.copy(alpha = 0.88f),
+            border = androidx.compose.foundation.BorderStroke(
+                1.dp,
+                if (isLowSanity) HorrorBloodRed.copy(alpha = 0.7f) else HorrorColdTeal.copy(alpha = 0.4f)
+            )
         ) {
             Row(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.PanTool,
+                    imageVector = if (isLightOn) Icons.Default.Highlight else Icons.Default.PanTool,
                     contentDescription = null,
-                    tint = if (isLowSanity) HorrorBloodRed else HorrorColdTeal,
-                    modifier = Modifier.size(12.dp)
+                    tint = if (isLowSanity) HorrorBloodRed else if (isLightOn) Color(0xFFFFD43B) else HorrorColdTeal,
+                    modifier = Modifier.size(13.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = when {
-                        isLowSanity -> "MANO 3D: TEMBLOR (CORDURA CRÍTICA)"
-                        isInspecting -> "MANO 3D: EXAMINAR EVIDENCIA"
-                        else -> "MANO 3D: AGARRE ACTIVO (8 HUESOS)"
+                        isLowSanity -> "LINTERNA VINTAGE: TEMBLOR DE PÁNICO"
+                        isInspecting -> "LINTERNA VINTAGE: INSPECCIONANDO"
+                        isLightOn -> "LINTERNA VINTAGE: HAZ ACTIVO (1984)"
+                        else -> "LINTERNA VINTAGE: APAGADA (CLICK PARA ENCENDER)"
                     },
                     style = MaterialTheme.typography.labelSmall,
                     fontSize = 9.sp,
@@ -147,212 +155,350 @@ fun FirstPersonHandView(
 }
 
 /**
- * Dibuja la geometría estilizada de la mano con guante de investigación forense
- * (Bone_Forearm_Wrist, Bone_Hand_Palm, Bone_Thumb, Bone_Index, Bone_Middle, Bone_Ring_Pinky)
- * y el cuerpo metálico de la linterna industrial.
+ * Renderizado de la linterna 'vintage_flashlight' con guante de investigación 'investigator_hands'.
+ * Refleja fielmente el modelo 3D descargado:
+ * - Caja de batería roja desgastada de época con tornillería y marcas de óxido.
+ * - Asa superior gruesa de baquelita negra y soporte reforzado.
+ * - Reflector parabólico pulido de aluminio orientado hacia el frente con lente estriada.
+ * - Cono volumétrico de iluminación lógica con cálida incandescencia y partículas de polvo.
  */
-private fun DrawScope.drawInvestigatorHandAndFlashlight(
+private fun DrawScope.drawVintageFlashlightAndHand(
     baseX: Float,
     baseY: Float,
     isLightOn: Boolean,
+    filamentWarmup: Float,
     isLowSanity: Boolean,
     thumbPressY: Float
 ) {
-    // 1. Resplandor volumétrico de la lente de la linterna (si está encendida)
-    if (isLightOn) {
-        val lensCenterX = baseX - 110f
-        val lensCenterY = baseY - 80f
+    // -------------------------------------------------------------
+    // 0. CONO VOLUMÉTRICO DE ILUMINACIÓN (Efecto de haz de luz en niebla)
+    // -------------------------------------------------------------
+    val reflectorOriginX = baseX - 125f
+    val reflectorOriginY = baseY - 75f
+
+    if (filamentWarmup > 0.05f) {
+        // Haz volumétrico que viaja hacia el centro del campo visual
+        val beamPath = Path().apply {
+            moveTo(reflectorOriginX - 15f, reflectorOriginY - 35f)
+            lineTo(-40f, -80f) // Hacia la esquina superior izquierda
+            lineTo(size.width * 0.45f, size.height * 0.35f)
+            lineTo(reflectorOriginX + 25f, reflectorOriginY + 15f)
+            close()
+        }
+
+        drawPath(
+            path = beamPath,
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color(0xFFFFF9DB).copy(alpha = 0.32f * filamentWarmup),
+                    Color(0xFFFFE066).copy(alpha = 0.16f * filamentWarmup),
+                    Color(0xFFFF922B).copy(alpha = 0.04f * filamentWarmup),
+                    Color.Transparent
+                ),
+                start = Offset(reflectorOriginX, reflectorOriginY),
+                end = Offset(size.width * 0.15f, size.height * 0.15f)
+            )
+        )
+
+        // Resplandor cálido directo sobre la lente
         drawCircle(
             brush = Brush.radialGradient(
                 colors = listOf(
-                    Color(0xFFFFF9DB).copy(alpha = 0.75f),
-                    Color(0xFFFFD43B).copy(alpha = 0.35f),
-                    Color(0xFFFF922B).copy(alpha = 0.12f),
+                    Color(0xFFFFFFFF).copy(alpha = 0.85f * filamentWarmup),
+                    Color(0xFFFFF3BF).copy(alpha = 0.55f * filamentWarmup),
+                    Color(0xFFFFD43B).copy(alpha = 0.25f * filamentWarmup),
                     Color.Transparent
                 ),
-                center = Offset(lensCenterX, lensCenterY),
-                radius = 160f
+                center = Offset(reflectorOriginX - 8f, reflectorOriginY - 18f),
+                radius = 140f
             ),
-            radius = 160f,
-            center = Offset(lensCenterX, lensCenterY)
+            radius = 140f,
+            center = Offset(reflectorOriginX - 8f, reflectorOriginY - 18f)
         )
     }
 
-    // 2. Antebrazo del investigador (Bone_Forearm_Wrist - Tela oscura / Manga de abrigo)
+    // -------------------------------------------------------------
+    // 1. ANTEBRAZO CON MANGA FORENSE OSCURA (Bone_Forearm_Wrist)
+    // -------------------------------------------------------------
     val forearmPath = Path().apply {
-        moveTo(baseX + 180f, size.height + 40f)
-        lineTo(baseX + 80f, baseY + 60f)
-        lineTo(baseX - 20f, baseY + 90f)
-        lineTo(baseX - 40f, size.height + 40f)
+        moveTo(baseX + 190f, size.height + 60f)
+        lineTo(baseX + 85f, baseY + 65f)
+        lineTo(baseX - 25f, baseY + 105f)
+        lineTo(baseX - 55f, size.height + 60f)
         close()
     }
     drawPath(
         path = forearmPath,
         brush = Brush.linearGradient(
-            colors = listOf(Color(0xFF182026), Color(0xFF0F151A)),
+            colors = listOf(Color(0xFF1B232A), Color(0xFF11171D), Color(0xFF090D10)),
             start = Offset(baseX + 50f, baseY + 50f),
-            end = Offset(baseX + 120f, size.height)
+            end = Offset(baseX + 140f, size.height)
         )
     )
 
-    // 3. Cilindro principal de la Linterna (Aluminio estriado con bisel de latón)
-    val flashlightAngleRad = -0.45f
-    val flLength = 230f
-    val flRadius = 24f
+    // -------------------------------------------------------------
+    // 2. MODELO VINTAGE FLASHLIGHT: CAJA DE BATERÍA ROJA DESGASTADA
+    // -------------------------------------------------------------
+    // Cuerpo rectangular característico de linternas industriales de 1984
+    val bodyAngle = -0.42f
+    val bodyWidth = 150f
+    val bodyHeight = 54f
+    val bodyLeft = baseX - 45f
+    val bodyTop = baseY + 10f
 
-    val flStartX = baseX + 70f
-    val flStartY = baseY + 45f
-    val flEndX = baseX - 110f
-    val flEndY = baseY - 80f
-
-    // Tubo de aluminio
-    drawLine(
-        brush = Brush.linearGradient(
-            colors = listOf(
-                Color(0xFF4A5568),
-                Color(0xFFCBD5E0),
-                Color(0xFF2D3748),
-                Color(0xFF1A202C)
-            ),
-            start = Offset(flStartX, flStartY - 20f),
-            end = Offset(flStartX, flStartY + 20f)
-        ),
-        start = Offset(flStartX, flStartY),
-        end = Offset(flEndX, flEndY),
-        strokeWidth = flRadius * 2,
-        cap = androidx.compose.ui.graphics.StrokeCap.Round
+    // Sombra proyectada del cuerpo
+    drawRoundRect(
+        color = Color(0xFF080B0E),
+        topLeft = Offset(bodyLeft - 8f, bodyTop - 4f),
+        size = Size(bodyWidth + 8f, bodyHeight + 8f),
+        cornerRadius = CornerRadius(6f, 6f)
     )
 
-    // Cabeza reflectora cónica de la linterna (Bisel frontal)
-    val headPath = Path().apply {
-        moveTo(flEndX + 20f, flEndY + 12f)
-        lineTo(flEndX - 18f, flEndY - 14f)
-        lineTo(flEndX - 2f, flEndY - 36f)
-        lineTo(flEndX + 36f, flEndY - 10f)
+    // Caja roja de batería metálica con desgaste
+    val redVintagePrimary = Color(0xFFA82323)
+    val redVintageDark = Color(0xFF6B1414)
+    val redVintageHighlight = Color(0xFFC93B3B)
+
+    drawRoundRect(
+        brush = Brush.linearGradient(
+            colors = listOf(redVintageHighlight, redVintagePrimary, redVintageDark),
+            start = Offset(bodyLeft, bodyTop),
+            end = Offset(bodyLeft, bodyTop + bodyHeight)
+        ),
+        topLeft = Offset(bodyLeft, bodyTop),
+        size = Size(bodyWidth, bodyHeight),
+        cornerRadius = CornerRadius(5f, 5f)
+    )
+
+    // Franja estriada de refuerzo y remaches de latón
+    drawRoundRect(
+        color = Color(0xFF4A1010),
+        topLeft = Offset(bodyLeft + 18f, bodyTop + 6f),
+        size = Size(bodyWidth - 36f, bodyHeight - 12f),
+        cornerRadius = CornerRadius(3f, 3f),
+        style = Stroke(width = 2.5f)
+    )
+
+    // Remaches de esquinas
+    listOf(
+        Offset(bodyLeft + 10f, bodyTop + 10f),
+        Offset(bodyLeft + bodyWidth - 10f, bodyTop + 10f),
+        Offset(bodyLeft + 10f, bodyTop + bodyHeight - 10f),
+        Offset(bodyLeft + bodyWidth - 10f, bodyTop + bodyHeight - 10f)
+    ).forEach { rivetPos ->
+        drawCircle(color = Color(0xFFD4AF37), radius = 3.5f, center = rivetPos)
+        drawCircle(color = Color(0xFF3B2F04), radius = 3.5f, center = rivetPos, style = Stroke(1f))
+    }
+
+    // -------------------------------------------------------------
+    // 3. ASA SUPERIOR DE BAQUELITA NEGRA (Chunky black handle)
+    // -------------------------------------------------------------
+    val handlePath = Path().apply {
+        moveTo(bodyLeft + 25f, bodyTop)
+        lineTo(bodyLeft + 20f, bodyTop - 32f)
+        lineTo(bodyLeft + bodyWidth - 30f, bodyTop - 32f)
+        lineTo(bodyLeft + bodyWidth - 35f, bodyTop)
+    }
+    drawPath(
+        path = handlePath,
+        color = Color(0xFF1E2327),
+        style = Stroke(width = 16f, cap = StrokeCap.Round)
+    )
+    drawPath(
+        path = handlePath,
+        brush = Brush.linearGradient(
+            colors = listOf(Color(0xFF374151), Color(0xFF111827)),
+            start = Offset(bodyLeft, bodyTop - 35f),
+            end = Offset(bodyLeft, bodyTop)
+        ),
+        style = Stroke(width = 11f, cap = StrokeCap.Round)
+    )
+
+    // -------------------------------------------------------------
+    // 4. REFLECTOR PARABÓLICO PULIDO Y BISEL FRONTAL (Polished Reflector)
+    // -------------------------------------------------------------
+    val headConePath = Path().apply {
+        moveTo(bodyLeft + 10f, bodyTop - 6f)
+        lineTo(reflectorOriginX + 22f, reflectorOriginY + 28f)
+        lineTo(reflectorOriginX - 16f, reflectorOriginY - 26f)
+        lineTo(bodyLeft - 18f, bodyTop - 24f)
         close()
     }
     drawPath(
-        path = headPath,
+        path = headConePath,
         brush = Brush.linearGradient(
-            colors = listOf(Color(0xFFE2E8F0), Color(0xFF4A5568)),
-            start = Offset(flEndX + 30f, flEndY),
-            end = Offset(flEndX - 10f, flEndY - 20f)
+            colors = listOf(
+                Color(0xFFCBD5E1),
+                Color(0xFF64748B),
+                Color(0xFF334155),
+                Color(0xFF1E293B)
+            ),
+            start = Offset(bodyLeft, bodyTop),
+            end = Offset(reflectorOriginX, reflectorOriginY)
         )
     )
 
-    // Lente de cristal frontal
+    // Anillo de aluminio pulido / Bisel estriado exterior
     drawCircle(
-        color = if (isLightOn) Color(0xFFFFF9DB) else Color(0xFF2D3748),
-        radius = 16f,
-        center = Offset(flEndX - 10f, flEndY - 25f)
-    )
-    drawCircle(
-        color = if (isLightOn) Color(0xFFFFD43B) else Color(0xFF1A202C),
-        radius = 16f,
-        center = Offset(flEndX - 10f, flEndY - 25f),
-        style = Stroke(width = 3f)
+        brush = Brush.linearGradient(
+            colors = listOf(Color(0xFFF1F5F9), Color(0xFF64748B), Color(0xFF0F172A)),
+            start = Offset(reflectorOriginX - 25f, reflectorOriginY - 35f),
+            end = Offset(reflectorOriginX + 25f, reflectorOriginY + 35f)
+        ),
+        radius = 28f,
+        center = Offset(reflectorOriginX, reflectorOriginY),
+        style = Stroke(width = 6f)
     )
 
-    // 4. Interruptor mecánico deslizante
-    val switchX = baseX - 15f
-    val switchY = baseY - 15f + thumbPressY
+    // Cristal estriado de la lente
+    val lensBulbCenter = Offset(reflectorOriginX - 2f, reflectorOriginY - 4f)
+    drawCircle(
+        brush = Brush.radialGradient(
+            colors = if (filamentWarmup > 0.05f) {
+                listOf(
+                    Color(0xFFFFFFFF),
+                    Color(0xFFFFE066),
+                    Color(0xFFD97706),
+                    Color(0xFF451A03)
+                )
+            } else {
+                listOf(
+                    Color(0xFF64748B),
+                    Color(0xFF334155),
+                    Color(0xFF0F172A)
+                )
+            },
+            center = lensBulbCenter,
+            radius = 24f
+        ),
+        radius = 24f,
+        center = lensBulbCenter
+    )
+
+    // Bulbo de filamento de tungsteno visible
+    drawCircle(
+        color = if (filamentWarmup > 0.05f) Color(0xFFFFFFFF) else Color(0xFF94A3B8),
+        radius = 4.5f,
+        center = lensBulbCenter
+    )
+
+    // -------------------------------------------------------------
+    // 5. INTERRUPTOR MECÁNICO DESLIZANTE DE PALANCA
+    // -------------------------------------------------------------
+    val switchBaseX = bodyLeft + 35f
+    val switchBaseY = bodyTop - 8f
     drawRoundRect(
-        color = if (isLightOn) HorrorColdTeal else Color(0xFF718096),
-        topLeft = Offset(switchX, switchY),
-        size = Size(20f, 10f),
+        color = Color(0xFF1F2937),
+        topLeft = Offset(switchBaseX, switchBaseY),
+        size = Size(24f, 12f),
         cornerRadius = CornerRadius(3f, 3f)
     )
+    val sliderY = switchBaseY + thumbPressY - 2f
+    drawRoundRect(
+        brush = Brush.linearGradient(
+            colors = if (isLightOn) {
+                listOf(Color(0xFF22C55E), Color(0xFF15803D))
+            } else {
+                listOf(Color(0xFF9CA3AF), Color(0xFF4B5563))
+            },
+            start = Offset(switchBaseX, sliderY),
+            end = Offset(switchBaseX + 16f, sliderY + 8f)
+        ),
+        topLeft = Offset(switchBaseX + 4f, sliderY),
+        size = Size(16f, 8f),
+        cornerRadius = CornerRadius(2f, 2f)
+    )
 
-    // 5. Palma de la mano con guante de investigación (Bone_Hand_Palm - Cuero marrón gastado / Textura)
-    val palmColor = Color(0xFF4A3728) // Cuero marrón de trabajo/jardinería
-    val palmHighlight = Color(0xFF78593E)
-    val palmShadow = Color(0xFF2C1F16)
+    // -------------------------------------------------------------
+    // 6. GUANTE DE INVESTIGACIÓN FORENSE (Bone_Hand_Palm & Dedos)
+    // -------------------------------------------------------------
+    val leatherMain = Color(0xFF423023)
+    val leatherHighlight = Color(0xFF70523C)
+    val leatherShadow = Color(0xFF241A12)
 
+    // Palma y base de la mano sujetando el cuerpo de la linterna
     val palmPath = Path().apply {
-        moveTo(baseX + 75f, baseY + 60f)
-        lineTo(baseX + 15f, baseY - 5f)
-        lineTo(baseX - 45f, baseY + 15f)
-        lineTo(baseX + 10f, baseY + 95f)
+        moveTo(baseX + 80f, baseY + 65f)
+        lineTo(baseX + 18f, baseY - 8f)
+        lineTo(baseX - 40f, baseY + 18f)
+        lineTo(baseX + 15f, baseY + 98f)
         close()
     }
     drawPath(
         path = palmPath,
         brush = Brush.linearGradient(
-            colors = listOf(palmHighlight, palmColor, palmShadow),
-            start = Offset(baseX - 20f, baseY - 10f),
-            end = Offset(baseX + 50f, baseY + 90f)
+            colors = listOf(leatherHighlight, leatherMain, leatherShadow),
+            start = Offset(baseX - 25f, baseY - 10f),
+            end = Offset(baseX + 55f, baseY + 90f)
         )
     )
 
-    // 6. Pulgar presionando el interruptor (Bone_Thumb_Metacarpal & Bone_Thumb_Phalanx)
-    val thumbBaseX = baseX + 25f
-    val thumbBaseY = baseY + 10f
-    val thumbTipX = switchX + 10f
-    val thumbTipY = switchY - 4f
+    // Pulgar descansando sobre el interruptor (Bone_Thumb)
+    val thumbStartX = baseX + 25f
+    val thumbStartY = baseY + 12f
+    val thumbEndX = switchBaseX + 12f
+    val thumbEndY = sliderY + 2f
 
     drawLine(
         brush = Brush.linearGradient(
-            colors = listOf(palmHighlight, palmColor),
-            start = Offset(thumbBaseX, thumbBaseY),
-            end = Offset(thumbTipX, thumbTipY)
+            colors = listOf(leatherHighlight, leatherMain),
+            start = Offset(thumbStartX, thumbStartY),
+            end = Offset(thumbEndX, thumbEndY)
         ),
-        start = Offset(thumbBaseX, thumbBaseY),
-        end = Offset(thumbTipX, thumbTipY),
-        strokeWidth = 22f,
-        cap = androidx.compose.ui.graphics.StrokeCap.Round
+        start = Offset(thumbStartX, thumbStartY),
+        end = Offset(thumbEndX, thumbEndY),
+        strokeWidth = 24f,
+        cap = StrokeCap.Round
     )
-
-    // Uña / costura del pulgar
     drawCircle(
-        color = palmShadow,
+        color = leatherShadow,
         radius = 8f,
-        center = Offset(thumbTipX, thumbTipY)
+        center = Offset(thumbEndX, thumbEndY)
     )
 
-    // 7. Dedos cerrados alrededor del tubo (Bone_Index, Bone_Middle, Bone_Ring_Pinky)
-    val fingerColors = listOf(palmHighlight, palmColor, palmShadow)
-    val fingers = listOf(
-        Pair(Offset(baseX - 35f, baseY - 15f), Offset(baseX - 60f, baseY + 12f)), // Índice
-        Pair(Offset(baseX - 10f, baseY + 2f), Offset(baseX - 35f, baseY + 30f)),  // Medio
-        Pair(Offset(baseX + 15f, baseY + 18f), Offset(baseX - 10f, baseY + 46f)), // Anular
-        Pair(Offset(baseX + 40f, baseY + 34f), Offset(baseX + 15f, baseY + 62f))  // Meñique
+    // Cuatro dedos envolviendo la base de la linterna (Índice, Medio, Anular, Meñique)
+    val fingerGripPoints = listOf(
+        Pair(Offset(baseX - 30f, baseY - 10f), Offset(baseX - 58f, baseY + 20f)), // Índice
+        Pair(Offset(baseX - 6f, baseY + 8f), Offset(baseX - 34f, baseY + 38f)),   // Medio
+        Pair(Offset(baseX + 18f, baseY + 24f), Offset(baseX - 10f, baseY + 54f)), // Anular
+        Pair(Offset(baseX + 42f, baseY + 40f), Offset(baseX + 14f, baseY + 70f))  // Meñique
     )
 
-    fingers.forEachIndexed { idx, (fStart, fEnd) ->
+    fingerGripPoints.forEach { (fStart, fEnd) ->
         drawLine(
             brush = Brush.linearGradient(
-                colors = fingerColors,
+                colors = listOf(leatherHighlight, leatherMain, leatherShadow),
                 start = fStart,
                 end = fEnd
             ),
             start = fStart,
             end = fEnd,
-            strokeWidth = 20f,
-            cap = androidx.compose.ui.graphics.StrokeCap.Round
+            strokeWidth = 22f,
+            cap = StrokeCap.Round
         )
 
-        // Nudillos articulados (Joints)
+        // Nudillo articulado con costura de cuero
         drawCircle(
-            color = if (isLightOn) Color(0xFFB0825B) else palmColor,
-            radius = 10f,
+            color = if (filamentWarmup > 0.05f) Color(0xFF8C674B) else leatherMain,
+            radius = 10.5f,
             center = fStart
         )
         drawCircle(
-            color = palmShadow,
-            radius = 10f,
+            color = leatherShadow,
+            radius = 10.5f,
             center = fStart,
             style = Stroke(width = 2f)
         )
     }
 
-    // 8. Reflejo especular en los dedos si la linterna está encendida
-    if (isLightOn) {
+    // Reflejo especular dorado en el cuero del guante cuando la linterna alumbra
+    if (filamentWarmup > 0.05f) {
         drawLine(
-            color = Color(0xFFFFD43B).copy(alpha = 0.45f),
-            start = Offset(baseX - 35f, baseY - 15f),
-            end = Offset(baseX - 45f, baseY - 2f),
-            strokeWidth = 4f,
-            cap = androidx.compose.ui.graphics.StrokeCap.Round
+            color = Color(0xFFFFD43B).copy(alpha = 0.5f * filamentWarmup),
+            start = Offset(baseX - 32f, baseY - 12f),
+            end = Offset(baseX - 44f, baseY + 2f),
+            strokeWidth = 5f,
+            cap = StrokeCap.Round
         )
     }
 }

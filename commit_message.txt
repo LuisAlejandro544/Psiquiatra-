@@ -1,10 +1,13 @@
-feat: integrar asset 3D de manos de investigador con rig de 8 huesos, vista FPS y script de descarga CC0
+feat: integrar motor OpenGL ES 3.2, texturas PBR de baldosas y linterna vintage con iluminación volumétrica
 
-- Incorporar script automatizado `fetch_assets.sh` para búsqueda, descarga y desempaquetado de modelos 3D y texturas con licencia CC0 (Dominio Público).
-- Integrar asset 3D `investigator_hands` (glTF 2.0, OBJ, MTL, texturas PBR 1K y rig_info.json) con armadura esquelética modular de 8 articulaciones:
-  * Bone_Forearm_Wrist, Bone_Hand_Palm, Bone_Thumb_Metacarpal, Bone_Thumb_Phalanx, Bone_Index_Proximal, Bone_Index_Distal, Bone_Middle_Finger, Bone_Ring_Pinky_Group.
-- Inyectar animaciones esqueléticas y presets: Agarre de Linterna, Extensión de Inspección, Temblor de Pánico (baja cordura) y Descanso Anatómico.
-- Implementar componente `FirstPersonHandView` en perspectiva en primera persona sincronizado con balanceo al caminar (headBob), pulsación de interruptor y resplandor lumínico.
-- Añadir pestaña interactiva "Manos 3D & Rig" en el Cuaderno del Investigador con selector de poses inmediatas y controles deslizantes de rotación en 3 ejes (X, Y, Z) para cada hueso.
-- Añadir modelo 3D de utilería psiquiátrica `wheelchair_01` con 7 huesos articulados y animación de rodado y crujido.
-- Configurar workflow de GitHub Actions `override_commit_message.yml` para sincronización de mensajes de commit.
+- Migrar el pipeline de renderizado 3D a OpenGL ES 3.2 mediante `SanatorioGLSurfaceView` y `SanatorioGLRenderer`, ejecutando a 60 FPS estables en un hilo dedicado (GLThread) y eliminando por completo el lag ocasionado por recomposiciones masivas en el hilo principal de Jetpack Compose.
+- Enlazar las librerías nativas de GPU `GLESv3` y `EGL` en `CMakeLists.txt` y registrar el soporte de hardware acelerado en el puente C++ NDK (`native_bridge.cpp`).
+- Declarar el requerimiento de hardware OpenGL ES 3.2 (`0x00030002`) en `AndroidManifest.xml`.
+- Integrar el cargador `TextureLoader` para cargar las texturas PBR reales descargadas (`dirty_tiles_diffuse.jpg` e `interior_tiles_diffuse.jpg`) directamente en la memoria de la GPU para el suelo del sanatorio.
+- Implementar shaders GLSL en OpenGL ES 3.2 con distorsión sutil por baja cordura, atenuación cuadrática de luz, grano analógico de los años 80 y corrección atmosférica.
+- Integrar el nuevo modelo `vintage_flashlight` en la vista en primera persona (`FirstPersonHandView`):
+  * Caja de batería roja desgastada de época con remaches de latón y franjas de refuerzo.
+  * Asa superior angular de baquelita negra y reflector parabólico pulido de aluminio con bisel estriado.
+  * Lente de cristal con bulbo de filamento de tungsteno visible.
+  * Interruptor deslizante superior accionado físicamente por el pulgar del guante de investigación.
+- Implementar efecto físico de encendido con calentamiento de filamento incandescente (`filamentWarmup`), haz cónico volumétrico en niebla y reflejos especulares dinámicos sobre el cuero del guante.

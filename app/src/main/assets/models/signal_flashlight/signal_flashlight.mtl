@@ -1,0 +1,8 @@
+# Material generado por SanatorioAssetScraper (Licencia CC0)
+newmtl Material_Sanatorio_CC0
+Ka 0.2 0.2 0.2
+Kd 0.8 0.8 0.8
+Ks 0.1 0.1 0.1
+d 1.0
+illum 2
+map_Kd textures/signal_flashlight_diff_1k.jpg

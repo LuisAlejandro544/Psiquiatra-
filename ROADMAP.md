@@ -6,19 +6,19 @@ Este documento define la ruta de evolución técnica, narrativa y gráfica del p
 
 ## Fase 1: Cimientos y Arquitectura Políglota (Completada)
 - [x] Motor de proyección 3D DDA en primera persona para pantalla horizontal.
-- [x] Texturizado procedural con estética de sanatorio decadente de los años 80.
-- [x] Haz de linterna dinámico con interruptor de botón táctil y sonido mecánico.
-- [x] Simulación de tubos fluorescentes con parpadeo y cortes de suministro eléctrico.
-- [x] Síntesis de audio analógico de terror (zumbido a 60/120 Hz, pasos y tono subgrave).
-- [x] Integración de **C++ NDK (CMake)** para eliminación de pausas de Garbage Collector.
+- [x] Migración del motor de renderizado a **OpenGL ES 3.2** en hilo dedicado (`GLThread`) a 60 FPS estables con `SanatorioGLSurfaceView` y `SanatorioGLRenderer`, eliminando el lag en Compose.
+- [x] Texturas PBR de suelo real (`dirty_tiles` / `interior_tiles`) integradas desde assets de Dominio Público (CC0).
+- [x] Nueva linterna **Vintage Flashlight** de los años 80 con caja de batería roja desgastada, cono reflector de aluminio pulido y lente de filamento de tungsteno.
+- [x] Iluminación lógica de linterna: cono direccional enfocado (*spotlight* con halo de penumbra), atenuación cuadrática inversa y animación de encendido por calentamiento de filamento (`filamentWarmup`).
+- [x] Simulación de tubos fluorescentes con parpadeo procedural a 60/120 Hz y cortes de suministro eléctrico.
+- [x] Síntesis de audio analógico de terror (zumbido a 60 Hz, pasos sobre azulejos mojados y tono subgrave) en `AudioTrack`.
+- [x] Integración de **C++ NDK (CMake)** con enlace de librerías nativas de GPU `GLESv3` y `EGL`.
 - [x] Integración de **Lua 5.4.7 (C original de PUC-Rio)** para eventos narrativos y evaluación de estados.
-- [x] Integración de **Rust 1.98 (`#[no_std]`)** para lógica de cordura matemática y distancias seguras.
-- [x] Cuaderno del investigador con plano en tiempo real, expedientes médicos y pestaña del motor nativo.
-- [x] Modelos 3D de linterna creados y configurados (`.gltf` 2.0 y `.obj` / `.mtl`) con doble estado: encendida con emisión y apagada, con jerarquía de nodos y animación de interruptor.
-- [x] Script automatizado `./fetch_assets.sh` para búsqueda, descarga y desempaquetado de modelos 3D y texturas con licencia libre CC0 e inyección de armaduras/huesos.
-- [x] Asset 3D de manos del detective (`investigator_hands`) con rig de 8 articulaciones, texturas PBR y presets de animación (`Anim_Flashlight_Grip`, `Anim_Tremble_Insanity`).
-- [x] Renderizado en primera persona (`FirstPersonHandView`) con inercia sincronizada (`headBob`), pulsación de botón y temblores ante pánico.
-- [x] Pestaña de "Manos 3D & Rig" en el Cuaderno con controles deslizantes interactivos para los ejes X, Y, Z de las 8 articulaciones y presets inmediatos.
+- [x] Integración de **Rust 1.98 (`#[no_std]`)** para lógica de cordura matemática y distancias euclidianas.
+- [x] Cuaderno del investigador con plano en tiempo real, expedientes médicos y pestaña de diagnóstico del motor nativo.
+- [x] Asset 3D de manos del detective (`investigator_hands`) con rig de 8 articulaciones y guantes de cuero de investigación.
+- [x] Componente en primera persona (`FirstPersonHandView`) sincronizado con balanceo al caminar (`headBob`), deslizamiento del interruptor y haz volumétrico en niebla.
+- [x] Pestaña interactiva de "Manos 3D & Rig" en el Cuaderno con controles deslizantes para los 8 huesos.
 - [x] Modelo 3D de utilería de sanatorio (`wheelchair_01`) con rig de 7 huesos y animaciones de rodado y crujido.
 - [x] Flujos de GitHub Actions automatizados: compilación limpia de APK (`build-debug-apk.yml`) y sincronización de mensajes de commit (`override_commit_message.yml`).
 
@@ -34,9 +34,9 @@ Este documento define la ruta de evolución técnica, narrativa y gráfica del p
 ---
 
 ## Fase 3: Renderizado Avanzado y Sombreado
+- [x] Pipeline de shaders OpenGL ES 3.2 con aberración cromática ante baja cordura y corrección de contraste analógico.
 - [ ] Sombreado volumétrico y mapas de sombras suaves por columna con aceleración SIMD (ARM Neon) en C++.
-- [ ] Partículas de polvo y niebla baja flotando bajo los tubos fluorescentes.
-- [ ] Texturas con mapas de rugosidad y manchas de sangre seca con mayor resolución.
+- [ ] Partículas de polvo dinámicas y niebla baja flotando bajo los tubos fluorescentes.
 - [ ] Animaciones de apertura para puertas de hierro y mirillas de seguridad.
 
 ---
@@ -44,7 +44,7 @@ Este documento define la ruta de evolución técnica, narrativa y gráfica del p
 ## Fase 4: Entidades y Apariciones Hostiles
 - [ ] Sistema de inteligencia artificial para sombras errantes en Rust con máquinas de estados finitos.
 - [ ] Lógica de huida y escondite en armarios metálicos o celdas vacías.
-- [ ] Distorsión auditiva y visual (efecto de aberración cromática) cuando la cordura cae por debajo del 20%.
+- [ ] Distorsión auditiva y visual extrema cuando la cordura cae por debajo del 15%.
 - [ ] Modos de dificultad: "Investigador Forense" (exploración) y "Pesadilla Clínica" (cordura implacable).
 
 ---

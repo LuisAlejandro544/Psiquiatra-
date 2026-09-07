@@ -4,6 +4,8 @@
 #include <vector>
 #include <cmath>
 #include <android/log.h>
+#include <GLES3/gl32.h>
+#include <EGL/egl.h>
 
 #define LOG_TAG "SanatorioNative"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
@@ -112,6 +114,7 @@ Java_com_example_sanatorio_nativebridge_NativeEngineBridge_getEngineStatus(
 ) {
     std::ostringstream oss;
     oss << "C++ NDK: OK (Clang LLVM)\n";
+    oss << "OpenGL ES: 3.2 Hardware Accelerated (GLESv3/EGL)\n";
     oss << "Lua: " << LUA_RELEASE << " (" << LUA_COPYRIGHT << ")\n";
 
     // Test Rust call
