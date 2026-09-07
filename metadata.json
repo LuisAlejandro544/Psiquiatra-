@@ -1,0 +1,6 @@
+{
+  "name": "Sanatorio 3D",
+  "description": "Juego 3D en primera persona de terror y misterio en un psiquiátrico abandonado con linterna y luces parpadeantes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

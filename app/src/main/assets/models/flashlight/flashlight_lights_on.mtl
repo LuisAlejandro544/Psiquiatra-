@@ -1,0 +1,65 @@
+# Sanatorio 3D Flashlight Materials
+newmtl Flashlight_Body
+Ka 0.12 0.13 0.14
+Kd 0.22 0.23 0.26
+Ks 0.40 0.40 0.42
+Ns 45.0
+d 1.0
+illum 2
+
+newmtl Flashlight_Rubber_Grip
+Ka 0.05 0.05 0.05
+Kd 0.09 0.09 0.10
+Ks 0.05 0.05 0.05
+Ns 8.0
+d 1.0
+illum 2
+
+newmtl Flashlight_Head_Bezel
+Ka 0.15 0.16 0.18
+Kd 0.32 0.33 0.36
+Ks 0.60 0.60 0.62
+Ns 75.0
+d 1.0
+illum 2
+
+newmtl Flashlight_Chrome_Reflector
+Ka 0.60 0.60 0.62
+Kd 0.90 0.91 0.94
+Ks 0.98 0.98 0.99
+Ns 180.0
+d 1.0
+illum 3
+
+newmtl Flashlight_Switch_Knob
+Ka 0.30 0.12 0.02
+Kd 0.85 0.38 0.08
+Ks 0.30 0.30 0.30
+Ns 25.0
+d 1.0
+illum 2
+
+newmtl Flashlight_Glass_Lens
+Ka 0.20 0.25 0.30
+Kd 0.80 0.88 0.95
+Ks 0.95 0.95 0.95
+Ns 150.0
+d 0.35
+illum 4
+
+newmtl Flashlight_Bulb_Emissive
+Ka 1.0 0.95 0.70
+Kd 1.0 0.92 0.60
+Ks 1.0 1.0 1.0
+Ke 1.0 0.88 0.45
+Ns 200.0
+d 1.0
+illum 2
+
+newmtl Flashlight_Volumetric_Beam
+Ka 1.0 0.95 0.65
+Kd 1.0 0.92 0.60
+Ks 0.0 0.0 0.0
+Ke 0.85 0.80 0.40
+d 0.22
+illum 1

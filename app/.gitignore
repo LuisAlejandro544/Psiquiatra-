@@ -1,0 +1,44 @@
+# Build and Output directories
+*.apk
+*.aab
+build/
+/build
+.gradle/
+local.properties
+
+# Android C++ and NDK CMake artifacts
+.cxx/
+.externalNativeBuild/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*.o
+*.obj
+*.so
+*.a
+*.ninja
+.ninja_*
+compile_commands.json
+
+# Rust & Cargo artifacts
+target/
+**/target/
+Cargo.lock
+*.rlib
+*.rmeta
+*.d
+.rustup/
+.cargo/
+
+# Lua build and temporary artifacts
+*.luac
+luac.out
+/tmp/lua*
+*.tar.gz
+
+# IDE and OS specific
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*~

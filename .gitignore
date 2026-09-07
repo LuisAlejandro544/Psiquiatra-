@@ -1,0 +1,46 @@
+*.iml
+.gradle
+.kotlin
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+.env
+debug.keystore
+
+# C++, NDK and CMake build artifacts
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*.o
+*.obj
+*.so
+*.a
+*.ninja
+.ninja_*
+compile_commands.json
+
+# Rust & Cargo artifacts
+target/
+**/target/
+Cargo.lock
+*.rlib
+*.rmeta
+*.d
+.rustup/
+.cargo/
+
+# Lua build and temporary artifacts
+*.luac
+luac.out
+/tmp/lua*
+*.tar.gz
