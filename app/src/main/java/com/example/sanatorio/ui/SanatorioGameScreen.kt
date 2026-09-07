@@ -24,12 +24,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeMute
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.FlashlightOff
 import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.VolumeMute
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -244,6 +244,15 @@ fun SanatorioGameScreen() {
                 )
         )
 
+        // 2.1 FIRST-PERSON VIEWMODEL: MANOS 3D Y LINTERNA DEL INVESTIGADOR
+        FirstPersonHandView(
+            gameState = gameState,
+            onToggleFlashlight = {
+                gameState.isFlashlightOn = !gameState.isFlashlightOn
+                audioSynth.playFlashlightClick()
+            }
+        )
+
         // 3. TOP HUD BAR (Room Name, Sanity, Battery, Sound, Notebook)
         Row(
             modifier = Modifier
@@ -348,7 +357,7 @@ fun SanatorioGameScreen() {
                         .testTag("sound_toggle_button")
                 ) {
                     Icon(
-                        imageVector = if (gameState.isSoundEnabled) Icons.Default.VolumeUp else Icons.Default.VolumeMute,
+                        imageVector = if (gameState.isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeMute,
                         contentDescription = "Sonido",
                         tint = HorrorColdWhite,
                         modifier = Modifier.size(20.dp)
@@ -550,6 +559,7 @@ fun SanatorioGameScreen() {
                 playerX = gameState.playerX,
                 playerY = gameState.playerY,
                 asylumMap = map,
+                handRig = gameState.handRig,
                 onDismiss = { gameState.isNotebookOpen = false }
             )
         }

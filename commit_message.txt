@@ -1,0 +1,10 @@
+feat: integrar asset 3D de manos de investigador con rig de 8 huesos, vista FPS y script de descarga CC0
+
+- Incorporar script automatizado `fetch_assets.sh` para búsqueda, descarga y desempaquetado de modelos 3D y texturas con licencia CC0 (Dominio Público).
+- Integrar asset 3D `investigator_hands` (glTF 2.0, OBJ, MTL, texturas PBR 1K y rig_info.json) con armadura esquelética modular de 8 articulaciones:
+  * Bone_Forearm_Wrist, Bone_Hand_Palm, Bone_Thumb_Metacarpal, Bone_Thumb_Phalanx, Bone_Index_Proximal, Bone_Index_Distal, Bone_Middle_Finger, Bone_Ring_Pinky_Group.
+- Inyectar animaciones esqueléticas y presets: Agarre de Linterna, Extensión de Inspección, Temblor de Pánico (baja cordura) y Descanso Anatómico.
+- Implementar componente `FirstPersonHandView` en perspectiva en primera persona sincronizado con balanceo al caminar (headBob), pulsación de interruptor y resplandor lumínico.
+- Añadir pestaña interactiva "Manos 3D & Rig" en el Cuaderno del Investigador con selector de poses inmediatas y controles deslizantes de rotación en 3 ejes (X, Y, Z) para cada hueso.
+- Añadir modelo 3D de utilería psiquiátrica `wheelchair_01` con 7 huesos articulados y animación de rodado y crujido.
+- Configurar workflow de GitHub Actions `override_commit_message.yml` para sincronización de mensajes de commit.

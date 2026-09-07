@@ -1,0 +1,9 @@
+Asset: Garden Gloves 01 (garden_gloves_01)
+Origen: Poly Haven (Repositorio de Dominio Público)
+Licencia: Creative Commons Zero (CC0 1.0 Universal - Public Domain Dedication)
+
+Términos Legales:
+- Uso comercial libre permitido (sin pagos de regalías ni licencias).
+- No obliga a que el proyecto o aplicación sea de código abierto.
+- No requiere dar atribución obligatoria ni créditos forzosos.
+- Se permite modificar, redistribuir y empaquetar libremente en el APK.

@@ -27,5 +27,8 @@ data class GameState(
     var sanity: Float = 100f,
     var isSoundEnabled: Boolean = true,
     var discoveredLoreCount: Int = 0,
-    var totalLoreCount: Int = 5
+    var totalLoreCount: Int = 5,
+    
+    // Hand 3D Rig & Articulation
+    val handRig: HandRigManager = HandRigManager()
 )

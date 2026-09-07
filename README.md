@@ -24,8 +24,10 @@ La aplicación combina Kotlin + Jetpack Compose con un subsistema nativo de alto
 - **Luces Fluorescentes Inestables**: Parpadeos procedurales a 60/120 Hz, caídas de tensión y apagones totales inesperados.
 - **Audio Procedural de Tensión**: Zumbido eléctrico, pisadas sobre baldosas mojadas, chasquido de interruptores y frecuencias graves continuas generadas sintéticamente.
 - **Cuaderno del Investigador**: Consulta de expedientes clínicos archivados, plano esquemático del sanatorio en tiempo real y panel de diagnóstico del subsistema nativo.
-- **Modelos 3D Integrados (.gltf / .obj / .mtl)**:
+- **Modelos 3D Integrados (.gltf / .obj / .mtl / CC0)**:
+  - **Manos Articuladas del Investigador (`investigator_hands`)**: Malla 3D completa (3,975 vértices) con guantes de cuero de investigación forense, armadura esquelética modular de 8 articulaciones (muñeca, palma y 6 falanges para pulgar, índice, medio y grupo meñique), animaciones de agarre, temblor y extensión (`Anim_Flashlight_Grip`, `Anim_Tremble_Insanity`), renderizado dinámico en primera persona y panel de control de rotaciones en el Cuaderno.
   - **Linterna Industrial de Investigador**: Modelos 3D completos con tubos cilíndricos, anillos de agarre de goma antideslizante, reflector parabólico cromado, interruptor deslizante mecánico y bombilla incandescente.
+  - **Silla de Ruedas del Sanatorio (`wheelchair_01`)**: Modelo 3D de hospital psiquiátrico con 7 huesos articulados (chasis, respaldo inclinable, ruedas giratorias y correas de sujeción) con animaciones de crujido y rodado.
   - **Estados de Iluminación Reales**:
     - **Con Luces (Encendida)**: `flashlight_lights_on.obj` / `flashlight_lights_on.mtl` con material emisivo cálido (`Ke 1.0 0.88 0.45`), lente de cristal templado traslúcido y cono volumétrico de proyección.
     - **Sin Luces (Apagada)**: `flashlight_lights_off.obj` / `flashlight_lights_off.mtl` con filamento apagado (`Ke 0.0`), interruptor retraído y ausencia de haz de luz.
@@ -50,12 +52,14 @@ La aplicación combina Kotlin + Jetpack Compose con un subsistema nativo de alto
 
 ## 🚀 Integración Continua (GitHub Actions)
 
-El repositorio incluye el flujo de trabajo automatizado `.github/workflows/build-debug-apk.yml`:
-1. **Descarga el código fuente**: Clona el repositorio completo.
-2. **Prepara dependencias C++, Rust y Lua**: Instala CMake, Ninja, el compilador de Rust con los 3 targets Android (`aarch64`, `armv7`, `x86_64`) y compila las librerías nativas.
-3. **Firma Automática Obligatoria**: Ejecuta `./ensure_keystore.sh` para generar de manera desatendida la firma `debug.keystore`, eliminando esperas interactivas o bloqueos por credenciales faltantes.
-4. **Compilación Limpia Sin Caché**: Ejecuta `gradle assembleDebug --no-build-cache --no-daemon` para garantizar una compilación fresca y reproducible.
-5. **Artefacto Disponible**: Publica `app-debug.apk` como artefacto descargable en la pestaña *Actions* de GitHub.
+El repositorio incluye flujos de trabajo automatizados en `.github/workflows/`:
+1. **`build-debug-apk.yml`**:
+   - Descarga el código fuente y prepara dependencias C++, Rust (con sus 3 targets Android) y Lua.
+   - Ejecuta `./ensure_keystore.sh` para garantizar la firma `debug.keystore` de forma desatendida.
+   - Compila el APK Debug (`gradle assembleDebug --no-build-cache --no-daemon`) y publica el artefacto descargable.
+2. **`override_commit_message.yml`**:
+   - Inspecciona `commit_message.txt` tras cada push a ramas principales (`main`/`master`).
+   - Si el último mensaje del commit difiere del contenido de `commit_message.txt`, reescribe el commit automáticamente preservando la autoría y sincronizando el historial.
 
 ---
 
@@ -63,3 +67,4 @@ El repositorio incluye el flujo de trabajo automatizado `.github/workflows/build
 
 - **`./ensure_keystore.sh`**: Verifica la existencia de `debug.keystore`. Si no existe, la crea al instante mediante `keytool` para garantizar que la compilación Debug esté siempre firmada y lista.
 - **`./organize_md_to_root.sh`**: Centraliza todos los archivos de documentación Markdown (`.md`) exclusivamente en la raíz del repositorio, evitando duplicados en carpetas de módulos.
+- **`./fetch_assets.sh`**: Busca, descarga y desempaqueta modelos 3D y texturas con licencia CC0 (Dominio Público). Extrae archivos sueltos (glTF, OBJ, MTL y texturas) e inyecta armaduras de huesos (rigging) y animaciones editables.

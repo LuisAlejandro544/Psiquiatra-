@@ -1,0 +1,89 @@
+{
+  "armature_name": "Armature_Sanatorio_Rig",
+  "total_joints": 7,
+  "bones": [
+    {
+      "id": 1,
+      "name": "Armature_Root",
+      "default_translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 2,
+      "name": "Bone_Chassis_Base",
+      "default_translation": [
+        0.0,
+        0.4,
+        0.0
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 3,
+      "name": "Bone_Backrest_Tilt",
+      "default_translation": [
+        0.0,
+        0.35,
+        -0.25
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 4,
+      "name": "Bone_Wheel_Left",
+      "default_translation": [
+        -0.38,
+        0.32,
+        0.0
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 5,
+      "name": "Bone_Wheel_Right",
+      "default_translation": [
+        0.38,
+        0.32,
+        0.0
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 6,
+      "name": "Bone_Restraint_L",
+      "default_translation": [
+        -0.35,
+        0.48,
+        0.1
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 7,
+      "name": "Bone_Restraint_R",
+      "default_translation": [
+        0.35,
+        0.48,
+        0.1
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    }
+  ],
+  "animations": [
+    {
+      "name": "Anim_Wheel_Roll_Loop",
+      "target": "Ruedas izquierda y derecha",
+      "duration_sec": 2.0
+    },
+    {
+      "name": "Anim_Backrest_Creak_And_Tilt",
+      "target": "Respaldo articulado",
+      "duration_sec": 4.0
+    }
+  ],
+  "instructions": "Puedes rotar o trasladar cualquiera de estos huesos mediante c\u00f3digo o herramientas 3D."
+}

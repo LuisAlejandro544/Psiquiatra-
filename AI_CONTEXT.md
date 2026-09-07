@@ -41,14 +41,17 @@ Este archivo contiene el contexto técnico esencial, restricciones del entorno y
 
 6. **Modelos 3D y Recursos Tridimensionales**:
    - Ubicación estándar en el APK: `app/src/main/assets/models/`.
-   - Formatos admitidos: glTF 2.0 (`.gltf` autocontenido con buffers base64 y PBR) y Wavefront OBJ (`.obj` / `.mtl`).
-   - Los modelos interactivos como la linterna poseen estados diferenciados (`flashlight_lights_on` con material emisivo y haz volumétrico vs `flashlight_lights_off` en reposo).
-   - Siempre verificar que los modelos no utilicen marcas registradas y cumplan con las especificaciones estándar de glTF 2.0.
+   - Formatos admitidos: glTF 2.0 (`.gltf` autocontenido o con buffers binarios y PBR) y Wavefront OBJ (`.obj` / `.mtl`).
+   - Los modelos interactivos como la linterna poseen estados diferenciados (`flashlight_lights_on` vs `flashlight_lights_off`).
+   - El script `./fetch_assets.sh` automatiza la descarga y procesamiento de modelos CC0 (Dominio Público) e inyecta jerarquías de armaduras/huesos (rigging).
+   - Los modelos articulados (como `investigator_hands` de 8 articulaciones) disponen de un modelo de datos reactivo (`HandRigModel.kt`) sincronizado con la vista FPS y los controles deslizantes del cuaderno.
+   - Siempre verificar que los modelos no utilicen marcas registradas y cumplan con las especificaciones estándar de glTF 2.0 y licencia CC0.
 
 7. **Sin Dependencia de Archivos .env**:
    - La aplicación no requiere ni utiliza variables de entorno en archivos `.env` o `.env.example`.
    - El plugin `secrets-gradle-plugin` está desactivado para no añadir restricciones innecesarias a la compilación.
 
-8. **Ubicación de Documentación**:
+8. **Ubicación de Documentación y Mensajes de Commit**:
    - Todos los archivos `.md` (`README.md`, `ROADMAP.md`, `ESTRUCTURE.md`, `AI_CONTEXT.md`, `AGENTS.md`) deben residir exclusivamente en la raíz del repositorio, nunca dentro del subdirectorio `app/`.
    - Se puede ejecutar `./organize_md_to_root.sh` para limpiar y centralizar automáticamente cualquier archivo `.md`.
+   - Si existe el archivo `commit_message.txt`, debe estar redactado íntegramente en español y solo actualizarse cuando el usuario lo solicite explícitamente. El flujo de GitHub Actions `override_commit_message.yml` lo utiliza para sincronizar el historial git.

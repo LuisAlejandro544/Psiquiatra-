@@ -1,0 +1,353 @@
+{
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v1.6.16",
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [
+        0,
+        1
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "wheelchair_01",
+      "skin": 0
+    },
+    {
+      "name": "Armature_Root",
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "children": [
+        2,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "name": "Bone_Chassis_Base",
+      "translation": [
+        0.0,
+        0.4,
+        0.0
+      ],
+      "children": [
+        3
+      ]
+    },
+    {
+      "name": "Bone_Backrest_Tilt",
+      "translation": [
+        0.0,
+        0.35,
+        -0.25
+      ]
+    },
+    {
+      "name": "Bone_Wheel_Left",
+      "translation": [
+        -0.38,
+        0.32,
+        0.0
+      ]
+    },
+    {
+      "name": "Bone_Wheel_Right",
+      "translation": [
+        0.38,
+        0.32,
+        0.0
+      ]
+    },
+    {
+      "name": "Bone_Restraint_L",
+      "translation": [
+        -0.35,
+        0.48,
+        0.1
+      ]
+    },
+    {
+      "name": "Bone_Restraint_R",
+      "translation": [
+        0.35,
+        0.48,
+        0.1
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "lambert1",
+      "normalTexture": {
+        "index": 0
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "BakeGroup1_Low",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    }
+  ],
+  "images": [
+    {
+      "mimeType": "image/jpeg",
+      "name": "wheelchair_01_nor_gl",
+      "uri": "textures/wheelchair_01_nor_gl_1k.jpg"
+    },
+    {
+      "mimeType": "image/jpeg",
+      "name": "wheelchair_01_diff.png",
+      "uri": "textures/wheelchair_01_diff_1k.jpg"
+    },
+    {
+      "mimeType": "image/jpeg",
+      "name": "wheelchair_01_metal.png-wheelchair_01_rough.png",
+      "uri": "textures/wheelchair_01_arm_1k.jpg"
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 29445,
+      "max": [
+        0.4103996157646179,
+        1.1092802286148071,
+        0.6051971316337585
+      ],
+      "min": [
+        -0.41369134187698364,
+        0.005778669845312834,
+        -0.4856697618961334
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 29445,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 29445,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 120756,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 7,
+      "type": "MAT4"
+    },
+    {
+      "bufferView": 5,
+      "componentType": 5126,
+      "count": 5,
+      "type": "SCALAR",
+      "min": [
+        0.0
+      ],
+      "max": [
+        2.0
+      ]
+    },
+    {
+      "bufferView": 6,
+      "componentType": 5126,
+      "count": 5,
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 7,
+      "componentType": 5126,
+      "count": 5,
+      "type": "SCALAR",
+      "min": [
+        0.0
+      ],
+      "max": [
+        4.0
+      ]
+    },
+    {
+      "bufferView": 8,
+      "componentType": 5126,
+      "count": 5,
+      "type": "VEC4"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 353340,
+      "byteOffset": 0
+    },
+    {
+      "buffer": 0,
+      "byteLength": 353340,
+      "byteOffset": 353340
+    },
+    {
+      "buffer": 0,
+      "byteLength": 235560,
+      "byteOffset": 706680
+    },
+    {
+      "buffer": 0,
+      "byteLength": 241512,
+      "byteOffset": 942240
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1183752,
+      "byteLength": 448
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1184200,
+      "byteLength": 20
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1184220,
+      "byteLength": 80
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1184300,
+      "byteLength": 20
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1184320,
+      "byteLength": 80
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1184400,
+      "uri": "wheelchair_01.bin"
+    }
+  ],
+  "skins": [
+    {
+      "name": "Armature_Sanatorio_Rig",
+      "skeleton": 1,
+      "joints": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "inverseBindMatrices": 4
+    }
+  ],
+  "animations": [
+    {
+      "name": "Anim_Wheel_Roll_Loop",
+      "samplers": [
+        {
+          "input": 5,
+          "interpolation": "LINEAR",
+          "output": 6
+        }
+      ],
+      "channels": [
+        {
+          "sampler": 0,
+          "target": {
+            "node": 4,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 0,
+          "target": {
+            "node": 5,
+            "path": "rotation"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Anim_Backrest_Creak_And_Tilt",
+      "samplers": [
+        {
+          "input": 7,
+          "interpolation": "LINEAR",
+          "output": 8
+        }
+      ],
+      "channels": [
+        {
+          "sampler": 0,
+          "target": {
+            "node": 3,
+            "path": "rotation"
+          }
+        }
+      ]
+    }
+  ]
+}

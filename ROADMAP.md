@@ -15,6 +15,12 @@ Este documento define la ruta de evolución técnica, narrativa y gráfica del p
 - [x] Integración de **Rust 1.98 (`#[no_std]`)** para lógica de cordura matemática y distancias seguras.
 - [x] Cuaderno del investigador con plano en tiempo real, expedientes médicos y pestaña del motor nativo.
 - [x] Modelos 3D de linterna creados y configurados (`.gltf` 2.0 y `.obj` / `.mtl`) con doble estado: encendida con emisión y apagada, con jerarquía de nodos y animación de interruptor.
+- [x] Script automatizado `./fetch_assets.sh` para búsqueda, descarga y desempaquetado de modelos 3D y texturas con licencia libre CC0 e inyección de armaduras/huesos.
+- [x] Asset 3D de manos del detective (`investigator_hands`) con rig de 8 articulaciones, texturas PBR y presets de animación (`Anim_Flashlight_Grip`, `Anim_Tremble_Insanity`).
+- [x] Renderizado en primera persona (`FirstPersonHandView`) con inercia sincronizada (`headBob`), pulsación de botón y temblores ante pánico.
+- [x] Pestaña de "Manos 3D & Rig" en el Cuaderno con controles deslizantes interactivos para los ejes X, Y, Z de las 8 articulaciones y presets inmediatos.
+- [x] Modelo 3D de utilería de sanatorio (`wheelchair_01`) con rig de 7 huesos y animaciones de rodado y crujido.
+- [x] Flujos de GitHub Actions automatizados: compilación limpia de APK (`build-debug-apk.yml`) y sincronización de mensajes de commit (`override_commit_message.yml`).
 
 ---
 

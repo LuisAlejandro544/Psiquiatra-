@@ -1,0 +1,99 @@
+{
+  "armature_name": "Armature_Investigator_Hand",
+  "total_joints": 8,
+  "bones": [
+    {
+      "id": 1,
+      "name": "Bone_Forearm_Wrist",
+      "default_translation": [
+        0.0,
+        -0.15,
+        0.0
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 2,
+      "name": "Bone_Hand_Palm",
+      "default_translation": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 3,
+      "name": "Bone_Thumb_Metacarpal",
+      "default_translation": [
+        -0.04,
+        0.02,
+        0.02
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 4,
+      "name": "Bone_Thumb_Phalanx",
+      "default_translation": [
+        -0.02,
+        0.04,
+        0.02
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 5,
+      "name": "Bone_Index_Proximal",
+      "default_translation": [
+        -0.02,
+        0.08,
+        0.0
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 6,
+      "name": "Bone_Index_Distal",
+      "default_translation": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 7,
+      "name": "Bone_Middle_Finger",
+      "default_translation": [
+        0.01,
+        0.09,
+        0.0
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    },
+    {
+      "id": 8,
+      "name": "Bone_Ring_Pinky_Group",
+      "default_translation": [
+        0.03,
+        0.07,
+        0.0
+      ],
+      "role": "Hueso posicional / rotacional modificable en tiempo de ejecuci\u00f3n"
+    }
+  ],
+  "animations": [
+    {
+      "name": "Anim_Flashlight_Grip",
+      "target": "Dedos \u00edndice, pulgar y medio (agarre de linterna)",
+      "duration_sec": 2.0
+    },
+    {
+      "name": "Anim_Tremble_Insanity",
+      "target": "Mu\u00f1eca y palma (temblor por baja cordura)",
+      "duration_sec": 4.0
+    }
+  ],
+  "instructions": "Puedes rotar o trasladar cualquiera de estos huesos mediante c\u00f3digo o herramientas 3D."
+}

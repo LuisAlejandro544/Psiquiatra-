@@ -22,12 +22,19 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.material.icons.filled.Terminal
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -50,7 +57,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.sanatorio.model.AsylumMap
+import com.example.sanatorio.model.BoneJoint
 import com.example.sanatorio.model.Decoration
+import com.example.sanatorio.model.HandRigManager
 import com.example.ui.theme.HorrorAmber
 import com.example.ui.theme.HorrorColdTeal
 import com.example.ui.theme.HorrorColdWhite
@@ -65,6 +74,7 @@ fun InvestigatorNotebookDialog(
     playerX: Double,
     playerY: Double,
     asylumMap: AsylumMap,
+    handRig: HandRigManager = HandRigManager(),
     onDismiss: () -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -172,6 +182,17 @@ fun InvestigatorNotebookDialog(
                             }
                         }
                     )
+                    Tab(
+                        selected = selectedTab == 4,
+                        onClick = { selectedTab = 4 },
+                        text = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.PanTool, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Manos 3D & Rig")
+                            }
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -181,6 +202,7 @@ fun InvestigatorNotebookDialog(
                     1 -> MapTab(asylumMap, playerX, playerY)
                     2 -> ObjectivesTab()
                     3 -> NativeEngineTab()
+                    4 -> HandRigTab(handRig)
                 }
             }
         }
@@ -451,6 +473,248 @@ private fun NativeEngineTab() {
                         lineHeight = 18.sp
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HandRigTab(handRig: HandRigManager) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .testTag("hand_rig_tab_content")
+    ) {
+        item {
+            Text(
+                text = "ASSET 3D: MANOS DEL INVESTIGADOR (RIG & ARTICULACIÓN)",
+                style = MaterialTheme.typography.titleSmall,
+                color = HorrorColdTeal,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Card 1: Asset Information & Files
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                colors = CardDefaults.cardColors(containerColor = HorrorSurfaceVariant),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "investigator_hands (Modelo 3D y Rig)",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = HorrorAmber
+                        )
+                        Surface(
+                            color = HorrorColdTeal.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = "CC0 1.0 LIBRE",
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = HorrorColdTeal,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "• Archivos: ${handRig.gltfFile} | ${handRig.objFile} | Texturas PBR 1K\n• Total articulaciones: 8 huesos jerárquicos vinculados a glTF 2.0\n• Malla poligonal: 3,975 vértices con soporte para animación esqueletal",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = HorrorColdWhite,
+                        lineHeight = 18.sp
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "POSES Y ANIMACIONES ACTIVAS:",
+                style = MaterialTheme.typography.labelMedium,
+                color = HorrorColdWhite,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Quick Poses Selector
+            Column(modifier = Modifier.fillMaxWidth()) {
+                handRig.presets.forEach { preset ->
+                    val isSelected = handRig.currentPoseName == preset.id
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 3.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isSelected) HorrorColdTeal.copy(alpha = 0.15f) else HorrorDarkSurface
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            if (isSelected) HorrorColdTeal else HorrorColdWhite.copy(alpha = 0.15f)
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = preset.title,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isSelected) HorrorColdTeal else HorrorColdWhite
+                                )
+                                Text(
+                                    text = preset.description,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = HorrorTextMuted,
+                                    fontSize = 11.sp
+                                )
+                            }
+                            Button(
+                                onClick = { handRig.applyPreset(preset.id) },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isSelected) HorrorColdTeal else HorrorSurfaceVariant,
+                                    contentColor = if (isSelected) Color.Black else HorrorColdWhite
+                                ),
+                                shape = RoundedCornerShape(6.dp)
+                            ) {
+                                Text(
+                                    text = if (isSelected) "Activo" else "Aplicar",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "CONTROL INDIVIDUAL DE HUESOS (8 JUNTAS):",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = HorrorAmber,
+                    fontWeight = FontWeight.Bold
+                )
+                OutlinedButton(
+                    onClick = { handRig.resetToDefaults() },
+                    shape = RoundedCornerShape(6.dp)
+                ) {
+                    Text("Reiniciar", fontSize = 11.sp, color = HorrorColdWhite)
+                }
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+
+        // List of Bones with interactive rotation sliders
+        items(handRig.bones) { bone ->
+            BoneJointCard(bone = bone)
+        }
+    }
+}
+
+@Composable
+private fun BoneJointCard(bone: BoneJoint) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = HorrorDarkSurface),
+        border = androidx.compose.foundation.BorderStroke(1.dp, HorrorColdTeal.copy(alpha = 0.2f)),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column(modifier = Modifier.padding(10.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${bone.id}. ${bone.displayName} (${bone.name})",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Bold,
+                    color = HorrorColdWhite
+                )
+                Text(
+                    text = "X: ${bone.angleX.toInt()}° | Y: ${bone.angleY.toInt()}° | Z: ${bone.angleZ.toInt()}°",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = HorrorColdTeal,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 10.sp
+                )
+            }
+            Text(
+                text = bone.role,
+                style = MaterialTheme.typography.labelSmall,
+                color = HorrorTextMuted,
+                fontSize = 10.sp
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // Slider X
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Eje X", style = MaterialTheme.typography.labelSmall, color = HorrorColdWhite, modifier = Modifier.width(36.dp), fontSize = 10.sp)
+                Slider(
+                    value = bone.angleX,
+                    onValueChange = { bone.angleX = it },
+                    valueRange = -90f..90f,
+                    modifier = Modifier.weight(1f).height(24.dp),
+                    colors = SliderDefaults.colors(
+                        thumbColor = HorrorColdTeal,
+                        activeTrackColor = HorrorColdTeal,
+                        inactiveTrackColor = HorrorSurfaceVariant
+                    )
+                )
+            }
+
+            // Slider Y
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Eje Y", style = MaterialTheme.typography.labelSmall, color = HorrorColdWhite, modifier = Modifier.width(36.dp), fontSize = 10.sp)
+                Slider(
+                    value = bone.angleY,
+                    onValueChange = { bone.angleY = it },
+                    valueRange = -90f..90f,
+                    modifier = Modifier.weight(1f).height(24.dp),
+                    colors = SliderDefaults.colors(
+                        thumbColor = HorrorAmber,
+                        activeTrackColor = HorrorAmber,
+                        inactiveTrackColor = HorrorSurfaceVariant
+                    )
+                )
+            }
+
+            // Slider Z
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Eje Z", style = MaterialTheme.typography.labelSmall, color = HorrorColdWhite, modifier = Modifier.width(36.dp), fontSize = 10.sp)
+                Slider(
+                    value = bone.angleZ,
+                    onValueChange = { bone.angleZ = it },
+                    valueRange = -90f..90f,
+                    modifier = Modifier.weight(1f).height(24.dp),
+                    colors = SliderDefaults.colors(
+                        thumbColor = HorrorColdWhite,
+                        activeTrackColor = HorrorColdWhite,
+                        inactiveTrackColor = HorrorSurfaceVariant
+                    )
+                )
             }
         }
     }
